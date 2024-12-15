@@ -7,7 +7,7 @@ const Manager = () => {
   const [form, setform] = useState({ site: "", username: "", password: "" });
   const [passwordArray, setpasswordArray] = useState([]);
   const getPasswords = async () => {
-    let req = await fetch("http://localhost:3000/");
+    let req = await fetch("https://passkey-backend-version.vercel.app/");
     const passwords = await req.json();
     console.log(passwords);
     setpasswordArray(passwords);
@@ -49,7 +49,7 @@ const Manager = () => {
       form.username.length > 3 &&
       form.password.length > 3
     ) {
-      await fetch("http://localhost:3000/", {
+      await fetch("https://passkey-backend-version.vercel.app/", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: form.id }),
@@ -59,7 +59,7 @@ const Manager = () => {
       // Update state and localStorage
       const updatedArray = [...passwordArray, newPassword];
       setpasswordArray(updatedArray);
-      await fetch("http://localhost:3000/", {
+      await fetch("https://passkey-backend-version.vercel.app/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...form, id: uuidv4() }),
@@ -93,7 +93,7 @@ const Manager = () => {
     if (confirm("Do you really want to delete this password?")) {
       const updatedArray = passwordArray.filter((item) => item.id !== id);
       setpasswordArray(updatedArray);
-      let res = await fetch("http://localhost:3000/", {
+      let res = await fetch("https://passkey-backend-version.vercel.app/", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),
