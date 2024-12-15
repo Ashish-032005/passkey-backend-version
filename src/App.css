@@ -1,0 +1,9 @@
+input[type="password"]::-ms-reveal {
+    display: none;
+}
+
+input[type="password"] {
+    appearance: none;
+    -webkit-text-security: disc;
+}
+
