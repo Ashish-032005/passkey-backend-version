@@ -3,11 +3,12 @@ import { useRef, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { v4 as uuidv4 } from "uuid";
+// import.meta.env
 const Manager = () => {
   const [form, setform] = useState({ site: "", username: "", password: "" });
   const [passwordArray, setpasswordArray] = useState([]);
   const getPasswords = async () => {
-    let req = await fetch("https://passkey-backend-version.vercel.app/");
+    let req = await fetch("http://localhost:3000/");
     const passwords = await req.json();
     console.log(passwords);
     setpasswordArray(passwords);
@@ -42,58 +43,106 @@ const Manager = () => {
       ref.current.src = "icons/eyecross.png";
     }
   };
+  
+  // const savePassword = async () => {
 
+  //   if (
+  //     form.site.length > 3 &&
+  //     form.username.length > 3 &&
+  //     form.password.length > 3
+  //   ) {
+  //     // console.log(form)
+  //     // await fetch("http://localhost:3000/", {
+  //     //   method: "DELETE",
+  //     //   headers: { "Content-Type": "application/json" },
+  //     //   body: JSON.stringify({ id: form.id }),
+  //     // });
+      
+  //     const newPassword = { ...form, id: uuidv4() }; // Generate UUID once
+
+  //     // Update state and localStorage
+  //     const updatedArray = [...passwordArray, newPassword];
+  //     setpasswordArray(updatedArray);
+  //     await fetch("http://localhost:3000/", {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({ ...form, id: uuidv4() }),
+  //     });
+  //     setform({ site: "", username: "", password: "" });
+  //     toast("Password Saved!", {
+  //       position: "top-right",
+  //       autoClose: 5000,
+  //       hideProgressBar: false,
+  //       closeOnClick: true,
+  //       pauseOnHover: true,
+  //       draggable: true,
+  //       progress: undefined,
+  //       theme: "dark",
+  //     });
+  //   } else {
+  //     toast("Data Invalid!", {
+  //       position: "top-right",
+  //       autoClose: 5000,
+  //       hideProgressBar: false,
+  //       closeOnClick: true,
+  //       pauseOnHover: true,
+  //       draggable: true,
+  //       progress: undefined,
+  //       theme: "dark",
+  //     });
+  //   }
+  // };
   const savePassword = async () => {
     if (
       form.site.length > 3 &&
       form.username.length > 3 &&
       form.password.length > 3
     ) {
-      await fetch("https://passkey-backend-version.vercel.app/", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: form.id }),
-      });
-      const newPassword = { ...form, id: uuidv4() }; // Generate UUID once
-
-      // Update state and localStorage
-      const updatedArray = [...passwordArray, newPassword];
-      setpasswordArray(updatedArray);
-      await fetch("https://passkey-backend-version.vercel.app/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, id: uuidv4() }),
-      });
-      setform({ site: "", username: "", password: "" });
-      toast("Password Saved!", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
+      try {
+        if (form.id) {
+          // Exclude `_id` from the request payload
+          const { id, site, username, password } = form;
+          const response = await fetch(`http://localhost:3000/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ site, username, password }),
+          });
+  
+          if (!response.ok) {
+            throw new Error("Failed to update password");
+          }
+          toast.success("Password Updated!", { theme: "dark" });
+        } else {
+          // For new passwords
+          const newPassword = { ...form, id: uuidv4() };
+          const response = await fetch("http://localhost:3000/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(newPassword),
+          });
+  
+          if (!response.ok) {
+            throw new Error("Failed to save password");
+          }
+          toast.success("Password Saved!", { theme: "dark" });
+        }
+  
+        // Refresh the password list
+        await getPasswords();
+        setform({ site: "", username: "", password: "", id: null });
+      } catch (error) {
+        toast.error("Error saving password", { theme: "dark" });
+      }
     } else {
-      toast("Data Invalid!", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
+      toast.error("Data Invalid!", { theme: "dark" });
     }
   };
-
+  
   const deletePassword = async (id) => {
     if (confirm("Do you really want to delete this password?")) {
       const updatedArray = passwordArray.filter((item) => item.id !== id);
       setpasswordArray(updatedArray);
-      let res = await fetch("https://passkey-backend-version.vercel.app/", {
+      let res = await fetch("http://localhost:3000/", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),
