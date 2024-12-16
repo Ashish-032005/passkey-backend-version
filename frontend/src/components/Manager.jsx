@@ -8,7 +8,7 @@ const Manager = () => {
   const [form, setform] = useState({ site: "", username: "", password: "" });
   const [passwordArray, setpasswordArray] = useState([]);
   const getPasswords = async () => {
-    let req = await fetch("http://localhost:3000/");
+    let req = await fetch("https://passkey-backend-version-11.onrender.com/");
     const passwords = await req.json();
     console.log(passwords);
     setpasswordArray(passwords);
@@ -52,7 +52,7 @@ const Manager = () => {
   //     form.password.length > 3
   //   ) {
   //     // console.log(form)
-  //     // await fetch("http://localhost:3000/", {
+  //     // await fetch("https://passkey-backend-version-11.onrender.com/", {
   //     //   method: "DELETE",
   //     //   headers: { "Content-Type": "application/json" },
   //     //   body: JSON.stringify({ id: form.id }),
@@ -63,7 +63,7 @@ const Manager = () => {
   //     // Update state and localStorage
   //     const updatedArray = [...passwordArray, newPassword];
   //     setpasswordArray(updatedArray);
-  //     await fetch("http://localhost:3000/", {
+  //     await fetch("https://passkey-backend-version-11.onrender.com/", {
   //       method: "POST",
   //       headers: { "Content-Type": "application/json" },
   //       body: JSON.stringify({ ...form, id: uuidv4() }),
@@ -102,7 +102,7 @@ const Manager = () => {
         if (form.id) {
           // Exclude `_id` from the request payload
           const { id, site, username, password } = form;
-          const response = await fetch(`http://localhost:3000/${id}`, {
+          const response = await fetch(`https://passkey-backend-version-11.onrender.com/${id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ site, username, password }),
@@ -115,7 +115,7 @@ const Manager = () => {
         } else {
           // For new passwords
           const newPassword = { ...form, id: uuidv4() };
-          const response = await fetch("http://localhost:3000/", {
+          const response = await fetch("https://passkey-backend-version-11.onrender.com/", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(newPassword),
@@ -142,7 +142,7 @@ const Manager = () => {
     if (confirm("Do you really want to delete this password?")) {
       const updatedArray = passwordArray.filter((item) => item.id !== id);
       setpasswordArray(updatedArray);
-      let res = await fetch("http://localhost:3000/", {
+      let res = await fetch("https://passkey-backend-version-11.onrender.com/", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),
